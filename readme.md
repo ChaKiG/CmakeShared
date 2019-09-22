@@ -20,3 +20,11 @@ This gives us the following steps :
 The commands in order to do this can be seen in [custombuildcommand.bat](custombuildcommand.bat)
 
 The following project aims at recreating this particular behavior using Cmake
+
+## Try it
+
+* if you already know cmake, then go for it !
+* I tested this using:
+  * Visual 2019 AND Ninja generators
+  * MSVC 2019 toolchain and clang 8.0 for MSVC toolchain
+* An example of such configuration can be found in [launchbuild.bat](launchbuild.bat)

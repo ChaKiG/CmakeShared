@@ -2,14 +2,14 @@
 
 ## Why
 
-During a project, I wanted to integrate some new tools into our processes. In particular Clang. However, since we use a custom in-house, I had to completely reinvent our toolchain. Since Cmake is currently the "de facto" toolchain configurator, I decided to go for it.
+During a project I wanted to integrate some new tools into our processes, and was kept back by a completely custom in-house toolchain. In order to integrate these "standard" tools, I had to create an equivalence between our build toolchain and a standard one. Since Cmake is currently the "de facto" toolchain configurator, I decided to go for it.
 
-However, like most in-house custom tools, our toolchain is really flexible as to what it considers "Okay". As such we have a lot of interdependant DLLs. 
+However, like most in-house custom tools, our toolchain is really flexible as to what it considers "Okay". As such, we have a lot of interdependent DLLs, that Cmake doesn't handle well (and I do not resent it...).
 
 ## How
 
 Let's take as examples Lib1 and Lib2, where Lib1 uses symbols from Lib2, and Lib2 uses symbols from Lib1.  
-In order to to create the Lib1 DLL, we need exported symbols from Lib2, which in turn need exported symbols from Lib1. Currently we resolved this by linking in two phases, as described here : [Mutual Imports](https://docs.microsoft.com/en-us/cpp/build/mutual-imports?view=vs-2019).  
+In order to create the Lib1 DLL, we need exported symbols from Lib2, which in turn need exported symbols from Lib1. Currently we resolved this by linking in two phases, as described here : [Mutual Imports](https://docs.microsoft.com/en-us/cpp/build/mutual-imports?view=vs-2019).  
 This gives us the following steps :
 
 1. Compile sources

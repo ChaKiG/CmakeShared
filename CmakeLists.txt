@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.15.0)
+project(cproject CXX)
+
+# set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+# set_property(GLOBAL PROPERTY CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+set(SHR_LIBS "")
+add_subdirectory(lib1.m)
+add_subdirectory(lib2.m)
+
+add_executable(main ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+target_link_libraries(main PRIVATE lib1 lib2)
+install(TARGETS main DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

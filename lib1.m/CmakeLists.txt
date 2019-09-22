@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.15.0)
+project(lib1.m)
+
+add_library(lib1_obj OBJECT src/lib1help.cpp)
+target_include_directories(lib1_obj PUBLIC include/)
+target_include_directories(lib1_obj PRIVATE $<TARGET_PROPERTY:lib2_obj,INCLUDE_DIRECTORIES>)
+target_compile_definitions(lib1_obj PRIVATE __LIB1)
+
+add_library(lib1_static STATIC $<TARGET_OBJECTS:lib1_obj>)
+target_link_libraries(lib1_static PUBLIC lib2_static)
+set_target_properties(lib1_static PROPERTIES STATIC_LIBRARY_OPTIONS "/DEF") 
+set_target_properties(lib1_static PROPERTIES OUTPUT_NAME lib1)
+install(TARGETS lib1_static LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+
+add_library(lib1_shared SHARED $<TARGET_OBJECTS:lib1_obj>)
+target_link_libraries(lib1_shared PRIVATE lib1_static)
+target_include_directories(lib1_shared PUBLIC include/)
+set_target_properties(lib1_shared PROPERTIES RUNTIME_OUTPUT_NAME lib1)
+
+add_library(lib1 ALIAS lib1_shared) 
+install(TARGETS lib1_shared RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+install(FILES $<TARGET_PDB_FILE:lib1_shared> DESTINATION ${CMAKE_INSTALL_PREFIX}/bin OPTIONAL)

@@ -1,26 +1,23 @@
 cmake_minimum_required(VERSION 3.15.0)
 project(lib1.m)
 
+# compile definitions
 add_library(lib1_obj OBJECT src/lib1help.cpp)
 target_include_directories(lib1_obj PUBLIC include/)
 target_include_directories(lib1_obj PRIVATE $<TARGET_PROPERTY:lib2_obj,INCLUDE_DIRECTORIES>)
 target_compile_definitions(lib1_obj PRIVATE __LIB1)
 
+# static lib for Link1st (resolve cyclic dep)
 add_library(lib1_static STATIC $<TARGET_OBJECTS:lib1_obj>)
 target_link_libraries(lib1_static PUBLIC lib2_static)
 
+# shared lib for link2nd (final dll)
 add_library(lib1 SHARED $<TARGET_OBJECTS:lib1_obj>)
 target_include_directories(lib1 PUBLIC include/)
 target_link_libraries(lib1 PRIVATE lib1_static)
+
+# install directives : where to put final files
 install(TARGETS lib1 RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 install(TARGETS lib1 LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 install(FILES $<TARGET_PDB_FILE:lib1> DESTINATION ${CMAKE_INSTALL_PREFIX}/bin OPTIONAL)
 
-
-# add_library(lib1_s STATIC $<TARGET_OBJECTS:lib1_obj>)
-# target_include_directories(lib1_s PUBLIC include/)
-# target_link_libraries(lib1_s PRIVATE lib2_s)
-
-# add_library(lib1 SHARED $<TARGET_OBJECTS:lib1_obj>)
-# target_include_directories(lib1 PUBLIC include/)
-# target_link_libraries(lib1 PRIVATE lib1_s lib2_s)

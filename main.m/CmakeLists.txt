@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.15.0)
+project(main.m)
+
+# compile and link directives
+add_executable(main ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+target_link_libraries(main PUBLIC lib1)
+target_link_libraries(main PUBLIC lib2)
+
+# install directives : where to put final files
+install(TARGETS main RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+install(FILES $<TARGET_PDB_FILE:main> DESTINATION ${CMAKE_INSTALL_PREFIX}/bin OPTIONAL)

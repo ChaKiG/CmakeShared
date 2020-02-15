@@ -1,16 +1,10 @@
 cmake_minimum_required(VERSION 3.15.0)
 project(cproject CXX)
 
-# set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # set_property(GLOBAL PROPERTY CMAKE_EXPORT_COMPILE_COMMANDS ON)
-# set(CMAKE_CXX_VISIBILITY_PRESET default)
-# set(CMAKE_VISIBILITY_INLINES_HIDDEN 0)
-# set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/../install" CACHE PATH "" FORCE)
+# set_property(GLOBAL PROPERTY CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+# SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/../install" CACHE PATH "" FORCE)
 
 add_subdirectory(lib1.m)
 add_subdirectory(lib2.m)
-
-add_executable(main ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
-target_link_libraries(main PRIVATE lib1 lib2)
-install(TARGETS main DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+add_subdirectory(main.m)

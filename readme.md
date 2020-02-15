@@ -13,9 +13,16 @@ In order to create the Lib1 DLL, we need exported symbols from Lib2, which in tu
 This gives us the following steps :
 
 1. Compile sources
-2. Create lib1.lib/exp AND lib2.lib/exp from source (without linking them together)
-3. Create lib1.DLL using lib1.obj and lib2.lib/lib2.exp  
-4. Create lib2.DLL using lib2.obj and lib1.lib/lib1.exp
+2. Create static libs
+
+- Create lib1.lib/exp from objects
+- Create lib2.lib/exp from objects
+
+3. Create DLL
+
+- Create lib1.DLL using lib1.obj and lib2.lib/lib2.exp 
+- Create lib2.DLL using lib2.obj and lib1.lib/lib1.exp
+
 
 The commands in order to do this can be seen in [custombuildcommand.bat](custombuildcommand.bat)
 
@@ -25,6 +32,6 @@ The following project aims at recreating this particular behavior using Cmake
 
 * if you already know cmake, then go for it !
 * I tested this using:
-  * Visual 2019 AND Ninja generators
-  * MSVC 2019 toolchain and clang 8.0 for MSVC toolchain
+  * Ninja generators
+  * clang 9.0 for MSVC toolchain
 * An example of such configuration can be found in [launchbuild.bat](launchbuild.bat)

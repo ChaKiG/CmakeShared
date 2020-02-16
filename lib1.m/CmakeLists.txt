@@ -8,13 +8,25 @@ target_include_directories(lib1_obj PRIVATE $<TARGET_PROPERTY:lib2_obj,INCLUDE_D
 target_compile_definitions(lib1_obj PRIVATE __LIB1)
 
 # static lib for Link1st (resolve cyclic dep)
-add_library(lib1_static STATIC $<TARGET_OBJECTS:lib1_obj>)
-target_link_libraries(lib1_static PUBLIC lib2_static)
+add_library(lib1_s $<TARGET_OBJECTS:lib1_obj>)
+target_link_libraries(lib1_s PUBLIC lib2_s)
+set_target_properties(lib1_s PROPERTIES STATIC_LIBRARY_OPTIONS /DEF)
+# add_custom_command(TARGET lib1_s POST_BUILD
+# COMMAND dumpbin /LINKERMEMBER ${CMAKE_CURRENT_BINARY_DIR}/lib1_s.lib > ${CMAKE_CURRENT_BINARY_DIR}/lib1_s.dump
+# COMMAND C:/Users/kig/Development/CmakeShared/build/dump2def.exe ${CMAKE_CURRENT_BINARY_DIR}/lib1_s.dump ${CMAKE_CURRENT_BINARY_DIR}/lib1_s.def
+# COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/lib1_s.def ${CMAKE_CURRENT_BINARY_DIR}/lib1.def
+# )
+
+# module lib
+# add_library(lib1_m MODULE $<TARGET_OBJECTS:lib1_obj>)
+# target_include_directories(lib1_m PUBLIC include/)
+# target_link_libraries(lib1_m PUBLIC lib1_s)
 
 # shared lib for link2nd (final dll)
 add_library(lib1 SHARED $<TARGET_OBJECTS:lib1_obj>)
 target_include_directories(lib1 PUBLIC include/)
-target_link_libraries(lib1 PRIVATE lib1_static)
+target_link_libraries(lib1 PRIVATE lib1_s)
+
 
 # install directives : where to put final files
 install(TARGETS lib1 RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

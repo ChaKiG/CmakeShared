@@ -11,25 +11,17 @@ target_compile_definitions(lib1_obj PRIVATE __LIB1)
 add_library(lib1_s $<TARGET_OBJECTS:lib1_obj>)
 target_link_libraries(lib1_s PUBLIC lib2_s)
 set_target_properties(lib1_s PROPERTIES STATIC_LIBRARY_OPTIONS /DEF)
-# add_custom_command(TARGET lib1_s POST_BUILD
-# COMMAND dumpbin /LINKERMEMBER ${CMAKE_CURRENT_BINARY_DIR}/lib1_s.lib > ${CMAKE_CURRENT_BINARY_DIR}/lib1_s.dump
-# COMMAND C:/Users/kig/Development/CmakeShared/build/dump2def.exe ${CMAKE_CURRENT_BINARY_DIR}/lib1_s.dump ${CMAKE_CURRENT_BINARY_DIR}/lib1_s.def
-# COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/lib1_s.def ${CMAKE_CURRENT_BINARY_DIR}/lib1.def
-# )
-
-# module lib
-# add_library(lib1_m MODULE $<TARGET_OBJECTS:lib1_obj>)
-# target_include_directories(lib1_m PUBLIC include/)
-# target_link_libraries(lib1_m PUBLIC lib1_s)
+set_target_properties(lib1_s PROPERTIES OUTPUT_NAME lib1)
 
 # shared lib for link2nd (final dll)
-add_library(lib1 SHARED $<TARGET_OBJECTS:lib1_obj>)
-target_include_directories(lib1 PUBLIC include/)
-target_link_libraries(lib1 PRIVATE lib1_s)
-
+add_library(lib1_d SHARED $<TARGET_OBJECTS:lib1_obj>)
+target_include_directories(lib1_d PUBLIC include/)
+target_link_libraries(lib1_d PRIVATE lib1_s)
+set_target_properties(lib1_d PROPERTIES RUNTIME_OUTPUT_NAME lib1)
 
 # install directives : where to put final files
-install(TARGETS lib1 RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
-install(TARGETS lib1 LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-install(FILES $<TARGET_PDB_FILE:lib1> DESTINATION ${CMAKE_INSTALL_PREFIX}/bin OPTIONAL)
+add_library(lib1 ALIAS lib1_d) 
+install(TARGETS lib1_d RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+install(TARGETS lib1_d LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(FILES $<TARGET_PDB_FILE:lib1_d> DESTINATION ${CMAKE_INSTALL_PREFIX}/bin OPTIONAL)
 

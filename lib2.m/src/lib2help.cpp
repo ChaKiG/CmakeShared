@@ -19,4 +19,10 @@ void Lib2Help::Lib2Help_Print()
     cout << "Print lib2" << endl;
     cout << "Using Lib1 : " << endl;
     Lib1Help help1;
+    help1.Lib1Help_RemotePrint();
+}
+
+void Lib2Help::Lib2Help_RemotePrint()
+{
+    cout << "Print lib2 remote" << endl;
 }

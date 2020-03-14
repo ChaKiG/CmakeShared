@@ -7,4 +7,5 @@ public:
     virtual ~Lib2Help();
 
     void Lib2Help_Print();
+    void Lib2Help_RemotePrint();
 };

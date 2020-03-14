@@ -19,7 +19,12 @@ void Lib1Help::Lib1Help_Print()
     cout << "Print lib1" << endl;
     cout << "Using Lib2 : " << endl;
     Lib2Help help2;
-    Lib2Help * wtfptr = nullptr;
-    wtfptr->Lib2Help_Print();
-
+    help2.Lib2Help_RemotePrint();
 }
+
+void Lib1Help::Lib1Help_RemotePrint()
+{
+    cout << "Print lib1 remote" << endl;
+}
+
+

@@ -7,28 +7,14 @@ target_include_directories(lib2_obj PUBLIC include/)
 target_include_directories(lib2_obj PRIVATE $<TARGET_PROPERTY:lib1_obj,INCLUDE_DIRECTORIES>)
 target_compile_definitions(lib2_obj PRIVATE __LIB2)
 
-# static lib for Link1st (resolve cyclic dep)
-add_library(lib2_s STATIC $<TARGET_OBJECTS:lib2_obj>)
-target_link_libraries(lib2_s PUBLIC lib1_s)
-set_target_properties(lib2_s PROPERTIES STATIC_LIBRARY_OPTIONS /DEF)
-# add_custom_command(TARGET lib2_s POST_BUILD
-# COMMAND dumpbin /LINKERMEMBER ${CMAKE_CURRENT_BINARY_DIR}/lib2_s.lib > ${CMAKE_CURRENT_BINARY_DIR}/lib2_s.dump
-# COMMAND C:/Users/kig/Development/CmakeShared/build/dump2def.exe ${CMAKE_CURRENT_BINARY_DIR}/lib2_s.dump ${CMAKE_CURRENT_BINARY_DIR}/lib2_s.def
-# COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/lib2_s.def ${CMAKE_CURRENT_BINARY_DIR}/lib2.def
-# )
+# Link1st with shared incomplete lib
+add_library(lib2_light SHARED $<TARGET_OBJECTS:lib2_obj>)
+target_include_directories(lib2_light PUBLIC include/)
+set_target_properties(lib2_light PROPERTIES OUTPUT_NAME lib2)
+target_link_options(lib2_light PRIVATE -Xlinker /force:unresolved)
+install(TARGETS lib2_light ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
-# # module lib
-# add_library(lib2_m MODULE $<TARGET_OBJECTS:lib2_obj>)
-# target_include_directories(lib2_m PUBLIC include/)
-# target_link_libraries(lib2_m PUBLIC lib2_s)
-
-# shared lib for link2nd (final dll)
-add_library(lib2 SHARED $<TARGET_OBJECTS:lib2_obj>)
-target_include_directories(lib2 PUBLIC include/)
-target_link_libraries(lib2 PRIVATE lib2_s)
-# target_link_options(lib2 PRIVATE /def:${CMAKE_CURRENT_BINARY_DIR}/lib2_s.def)
-
-# install directives : where to put final files
-install(TARGETS lib2 RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
-install(TARGETS lib2 LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-install(FILES $<TARGET_PDB_FILE:lib2> DESTINATION ${CMAKE_INSTALL_PREFIX}/bin OPTIONAL)
+# Link2nd with all symbols
+add_library(lib2_full SHARED $<TARGET_OBJECTS:lib2_obj>)
+target_link_libraries(lib2_full PRIVATE lib1_light)
+install(TARGETS lib2_full RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

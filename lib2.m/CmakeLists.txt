@@ -7,14 +7,18 @@ target_include_directories(lib2_obj PUBLIC include/)
 target_include_directories(lib2_obj PRIVATE $<TARGET_PROPERTY:lib1_obj,INCLUDE_DIRECTORIES>)
 target_compile_definitions(lib2_obj PRIVATE __LIB2)
 
-# Link1st with shared incomplete lib
-add_library(lib2_light SHARED $<TARGET_OBJECTS:lib2_obj>)
-target_include_directories(lib2_light PUBLIC include/)
-set_target_properties(lib2_light PROPERTIES OUTPUT_NAME lib2)
-target_link_options(lib2_light PRIVATE -Xlinker /force:unresolved)
-install(TARGETS lib2_light ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+# create importlib from obj
+add_library(lib2_implib STATIC ../dummy.cpp)
+target_include_directories(lib2_implib PUBLIC include/)
+add_custom_command(TARGET lib2_implib POST_BUILD COMMAND lib /nologo /def $<TARGET_OBJECTS:lib2_obj> /OUT:lib2.lib)
+set_target_properties(lib2_implib PROPERTIES ARCHIVE_OUTPUT_NAME lib2)
 
-# Link2nd with all symbols
-add_library(lib2_full SHARED $<TARGET_OBJECTS:lib2_obj>)
-target_link_libraries(lib2_full PRIVATE lib1_light)
-install(TARGETS lib2_full RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+# shared lib
+add_library(lib2_shr SHARED $<TARGET_OBJECTS:lib2_obj>)
+target_include_directories(lib2_shr PUBLIC include/)
+target_link_libraries(lib2_shr PRIVATE lib1_implib)
+set_target_properties(lib2_shr PROPERTIES RUNTIME_OUTPUT_NAME lib2)
+
+# install into correct folder
+install(TARGETS lib2_implib ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS lib2_shr    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

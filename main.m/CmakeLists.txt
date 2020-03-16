@@ -3,8 +3,8 @@ project(main.m)
 
 # compile and link directives
 add_executable(main ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
-target_link_libraries(main PUBLIC lib1_light)
-target_link_libraries(main PUBLIC lib2_light)
+target_link_libraries(main PUBLIC lib1_implib)
+target_link_libraries(main PUBLIC lib2_implib)
 
 # install directives : where to put final files
 install(TARGETS main RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
